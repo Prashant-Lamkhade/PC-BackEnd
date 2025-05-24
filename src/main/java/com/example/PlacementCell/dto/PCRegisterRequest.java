@@ -8,5 +8,5 @@ public class PCRegisterRequest {
     private String phone;
     private String collegeEmail;
     private String password;
-    private Integer tpoId;
+    private Long tpoId;
 }

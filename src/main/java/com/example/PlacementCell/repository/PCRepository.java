@@ -8,12 +8,13 @@ import java.util.Optional;
 
 @Repository
 public interface PCRepository extends JpaRepository<PC, Long> {
-    
+
+    // ✅ Correct non-static method
     Optional<PC> findByCollegeEmail(String collegeEmail);
-    
+
     Optional<PC> findByPhone(String phone);
-    
+
     boolean existsByCollegeEmail(String collegeEmail);
-    
+
     boolean existsByPhone(String phone);
 }

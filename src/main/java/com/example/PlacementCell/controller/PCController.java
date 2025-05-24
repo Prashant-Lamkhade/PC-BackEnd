@@ -1,7 +1,9 @@
 package com.example.PlacementCell.controller;
 
 import com.example.PlacementCell.dto.PCRegisterRequest;
-import com.example.PlacementCell.dto.PCLoginRequest;
+import com.example.PlacementCell.dto.LoginRequest;
+import com.example.PlacementCell.dto.LoginResponse;
+// import com.example.PlacementCell.dto.PCLoginRequest;
 import com.example.PlacementCell.service.PCAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -30,13 +32,8 @@ public class PCController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody PCLoginRequest request) {
-        try {
-            String jwtToken = pcAuthService.login(request);
-            return ResponseEntity.ok().body(jwtToken);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Login failed: " + e.getMessage());
-        }
+    public ResponseEntity<LoginResponse> loginPc(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(pcAuthService.loginPc(request));
     }
+
 }

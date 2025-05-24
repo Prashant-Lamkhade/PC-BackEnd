@@ -5,12 +5,22 @@ import com.example.PlacementCell.entity.Tpo;
 import com.example.PlacementCell.security.*;
 import com.example.PlacementCell.repository.PCRepository;
 import com.example.PlacementCell.repository.TpoRepository;
-import com.example.PlacementCell.dto.PCLoginRequest;
+import com.example.PlacementCell.dto.LoginRequest;
+// import com.example.PlacementCell.dto.LoginRequest.JwtResponse;
+// import com.example.PlacementCell.dto.PCLoginRequest;
+import com.example.PlacementCell.dto.LoginResponse;
 import com.example.PlacementCell.dto.PCRegisterRequest;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -36,14 +46,21 @@ public class PCAuthService {
         return "Placement Coordinator registered successfully";
     }
 
-    public String login(PCLoginRequest req) {
-        PC pc = pcRepo.findByCollegeEmail(req.getCollegeEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public LoginResponse loginPc(LoginRequest request) {
+        Optional<PC> optionalPc = pcRepo.findByCollegeEmail(request.getCollegeEmail());
 
-        if (!passwordEncoder.matches(req.getPassword(), pc.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+        if (optionalPc.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
-        return jwtUtil.generateToken(pc.getCollegeEmail());
+        PC pc = optionalPc.get();
+
+        if (!passwordEncoder.matches(request.getPassword(), pc.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        }
+
+        String token = jwtUtil.generateToken(pc.getCollegeEmail());
+
+        return new LoginResponse(token, "Login successful");
     }
 }
