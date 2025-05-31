@@ -18,3 +18,5 @@ public interface PCRepository extends JpaRepository<PC, Long> {
 
     boolean existsByPhone(String phone);
 }
+
+// Repository
